@@ -3,6 +3,8 @@ const { prefix, token } = require("./config.json");
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
+const { createCanvas, loadImage } = require("canvas")
+
 client.once("ready", () => {
     console.log("Snowplace bot has started!");
     client.user.setActivity(".snowplace <id1> <id2>")
@@ -31,13 +33,13 @@ client.on("message", (message) => {
             // check what service (by default discord, if input is incorrect or empty)
             switch (service) {
                 case "hiven":
-                    getResults(id1, id2, message, hivenEpoch);
+                    getResults(id1, id2, message, hivenEpoch, "Hiven");
                     break;
                 case "twitter":
-                    getResults(id1, id2, message, twitterEpoch);
+                    getResults(id1, id2, message, twitterEpoch, "Twitter");
                     break;
                 default:
-                    getResults(id1, id2, message, discordEpoch);
+                    getResults(id1, id2, message, discordEpoch, "Discord");
             }
         }
         else {
@@ -52,8 +54,8 @@ function sendInvalidError(channel) {
         .setColor("#48dff3")
         .setTitle("Invalid Usage")
         .addField("Usage", "To compare message ID timestamps, use:\n`" + prefix + "snowplace <id 1> <id 2> [service]`")
-        .addField("Services", "discord, hiven, twitter (default discord)")
-        .addField("Links", "*<:pepega:739989836592709684> [How do I find the message ID?](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-)*\n[Invite Bot](https://discord.com/oauth2/authorize?client_id=834658971896774686&scope=bot&permissions=8) - [Website](https://snow.place) - [GitHub](https://github.com/smuke/)\n")
+        .addField("Services (optional)", "discord, twitter, hiven (default discord)")
+        .addField("Links", "*<:pepega:739989836592709684> [How do I find the message ID?](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-)*\n[Invite Bot](https://discord.com/oauth2/authorize?client_id=834658971896774686&scope=bot&permissions=363520) - [Website](https://snow.place) - [GitHub](https://github.com/smuke/)\n")
         .setFooter("Try Snow.place in your browser!", "https://cdn.glitch.com/0967da06-2ba6-4b43-b2a6-d4912fa3e754%2Ffavicon.png");
 
     channel.send(embed);
@@ -65,36 +67,122 @@ function isNumeric(value) {
 
 // Get and send results
 
-function getResults(id1, id2, message, epoch) {
-    // First id
+function getResults(id1, id2, message, epoch, service) {
+    // First ID
     const timeLocal1 = makePretty(getDate(id1, epoch));
     const timeUTC1 = makePrettyUTC(getDate(id1, epoch));
     const timeUnix1 = getUnixTimestamp(getDate(id1, epoch));
-    // Second id
+    // Second ID
     const timeLocal2 = makePretty(getDate(id2, epoch));
     const timeUTC2 = makePrettyUTC(getDate(id2, epoch));
     const timeUnix2 = getUnixTimestamp(getDate(id2, epoch));
     
+    // If first ID is faster
     if (getDate(id1, epoch) < getDate(id2, epoch)) {
         let diffdate = formatDiff(
             getDiff(getDate(id1, epoch), getDate(id2, epoch))
         );
-        message.channel.send("FIRST IS FASTER BY " + diffdate);
+        createImage({ id1, id2, timeLocal1, timeUTC1, timeUnix1, timeLocal2, timeUTC2, timeUnix2, diffdate, service }, message, 1);
     }
+    // If second ID is faster
     else if (getDate(id1, epoch) > getDate(id2, epoch)) {
         let diffdate = formatDiff(
             getDiff(getDate(id1, epoch), getDate(id2, epoch))
         );
-        message.channel.send("SECOND IS FASTER BY " + diffdate);
+        createImage({ id1, id2, timeLocal1, timeUTC1, timeUnix1, timeLocal2, timeUTC2, timeUnix2, diffdate, service }, message, 2);
     }
+    // Error
     else {
-        message.channel.send("error");
+        message.channel.send("Error occured, please try again.");
     }
 
-    message.channel.send(`**FIRST ID** Local time: ${timeLocal1} - UTC time: ${timeUTC1} - Unix time: ${timeUnix1}`);
-    message.channel.send(`**SECOND ID** Local time: ${timeLocal2} - UTC time: ${timeUTC2} - Unix time: ${timeUnix2}`);
 }
 
+function createImage(data, message, faster) {
+    const canvas = createCanvas(700, 850)
+    const ctx = canvas.getContext("2d")
+    
+    // Background
+    ctx.fillStyle = "#0e1011";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Heading
+    ctx.fillStyle = "#5C6773";
+    ctx.font = "20px Poppins";
+    ctx.fillText(`${data.service} Timestamp Comparison`, 285, 62); // Unix
+
+    // IDs
+    ctx.fillStyle = "white";
+    ctx.fillText(data.id1, 75, 150); // 1
+    ctx.fillText(data.id2, 75, 520); // 2
+
+    // Winner
+    ctx.fillStyle = "#f3b948";
+    ctx.textAlign = "right";
+    switch (faster) {
+        case 1:
+            ctx.fillText("-" + data.diffdate, 625, 150); // 1
+            break;
+        case 2:
+            ctx.fillText("-" + data.diffdate, 625, 520); // 2
+            break;
+        default:
+            message.channel.send("Error occured, please try again.");
+    }
+
+    // Line 1
+    ctx.strokeStyle = "#1F2328";
+    ctx.beginPath();
+    ctx.moveTo(75, 170);
+    ctx.lineTo(625, 170);
+    ctx.stroke();
+
+    // Line 2
+    ctx.strokeStyle = "#1F2328";
+    ctx.beginPath();
+    ctx.moveTo(75, 540);
+    ctx.lineTo(625, 540);
+    ctx.stroke();
+
+    // Time titles 1
+    ctx.fillStyle = "#5C6773";
+    ctx.textAlign = "start";
+    ctx.fillText("EASTERN STANDARD TIME", 75, 210); // EST
+    ctx.fillText("COORDINATED UNIVERSAL TIME", 75, 300); // UTC
+    ctx.fillText("UNIX TIME", 75, 390); // Unix
+
+    // Time titles 2
+    ctx.fillStyle = "#5C6773";
+    ctx.fillText("EASTERN STANDARD TIME", 75, 580); // EST
+    ctx.fillText("COORDINATED UNIVERSAL TIME", 75, 670); // UTC
+    ctx.fillText("UNIX TIME", 75, 760); // Unix
+
+    // Times 1
+    ctx.fillStyle = "#48DFF3";
+    ctx.font = "500 25px Poppins";
+    ctx.fillText(data.timeLocal1, 75, 250); // EST
+    ctx.fillText(data.timeUTC1, 75, 340); // UTC
+    ctx.fillText(data.timeUnix1, 75, 430); // Unix
+
+    // Times 2
+    ctx.fillStyle = "#48DFF3";
+    ctx.font = "500 25px Poppins";
+    ctx.fillText(data.timeLocal2, 75, 620); // EST
+    ctx.fillText(data.timeUTC2, 75, 710); // UTC
+    ctx.fillText(data.timeUnix2, 75, 800); // Unix
+
+    // Logo
+    loadImage("./snowplace_logo.png")
+        .then((image) => {
+            ctx.drawImage(image, 75, 40, 185, 30);
+
+            const attachment = new Discord.MessageAttachment(canvas.toBuffer(), "snowplace.png");
+            message.channel.send(attachment);
+        })
+        .catch((err) => {
+            console.log(`Error loading image! ${err}`);
+        });
+}
 
 // Get results
 
