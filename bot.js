@@ -3,7 +3,9 @@ const { prefix, token } = require("./config.json");
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
-const { createCanvas, loadImage } = require("canvas")
+const { createCanvas, registerFont, loadImage } = require("canvas")
+registerFont('Poppins-Regular.ttf', { family: 'Poppins Regular' })
+registerFont('Poppins-Medium.ttf', { family: 'Poppins Medium' })
 
 client.once("ready", () => {
     console.log("Snowplace bot has started!");
@@ -110,7 +112,7 @@ function createImage(data, message, faster) {
 
     // Heading
     ctx.fillStyle = "#5C6773";
-    ctx.font = "20px Poppins";
+    ctx.font = "20px Poppins Regular";
     ctx.fillText(`${data.service} Timestamp Comparison`, 285, 62); // Unix
 
     // IDs
@@ -161,14 +163,14 @@ function createImage(data, message, faster) {
 
     // Times 1
     ctx.fillStyle = "#48DFF3";
-    ctx.font = "500 25px Poppins";
+    ctx.font = "500 25px Poppins Medium";
     ctx.fillText(data.timeLocal1, 75, 250); // LOCAL TIME
     ctx.fillText(data.timeUTC1, 75, 340); // UTC
     ctx.fillText(data.timeUnix1, 75, 430); // Unix
 
     // Times 2
     ctx.fillStyle = "#48DFF3";
-    ctx.font = "500 25px Poppins";
+    ctx.font = "25px Poppins Medium";
     ctx.fillText(data.timeLocal2, 75, 620); // LOCAL TIME
     ctx.fillText(data.timeUTC2, 75, 710); // UTC
     ctx.fillText(data.timeUnix2, 75, 800); // Unix
