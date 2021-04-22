@@ -31,45 +31,14 @@ client.on("message", (message) => {
             // check what service (by default discord, if input is incorrect or empty)
             switch (service) {
                 case "hiven":
-                    message.channel.send("set to hiven");
+                    getResults(id1, id2, message, hivenEpoch);
                     break;
                 case "twitter":
-                    message.channel.send("set to twitter");
-                    break;
-                case "discord":
-                    // First id
-                    const timeLocal1 = makePretty(getDate(id1, discordEpoch));
-                    const timeUTC1 = makePrettyUTC(getDate(id1, discordEpoch));
-                    const timeUnix1 = getUnixTimestamp(getDate(id1, discordEpoch));
-                    // Second id
-                    const timeLocal2 = makePretty(getDate(id2, discordEpoch));
-                    const timeUTC2 = makePrettyUTC(getDate(id2, discordEpoch));
-                    const timeUnix2 = getUnixTimestamp(getDate(id2, discordEpoch));
-                    
-                    if (getDate(id1, discordEpoch) < getDate(id2, discordEpoch)) {
-                        let diffdate = formatDiff(
-                            getDiff(getDate(id1, discordEpoch), getDate(id2, discordEpoch))
-                        );
-                        message.channel.send("FIRST IS FASTER BY " + diffdate);
-                    }
-                    else if (getDate(id1, discordEpoch) > getDate(id2, discordEpoch)) {
-                        let diffdate = formatDiff(
-                            getDiff(getDate(id1, discordEpoch), getDate(id2, discordEpoch))
-                        );
-                        message.channel.send("SECOND IS FASTER BY " + diffdate);
-                    }
-                    else {
-                        message.channel.send("error");
-                    }
-
-                    message.channel.send(`**FIRST ID** Local time: ${timeLocal1} - UTC time: ${timeUTC1} - Unix time: ${timeUnix1}`);
-                    message.channel.send(`**SECOND ID** Local time: ${timeLocal2} - UTC time: ${timeUTC2} - Unix time: ${timeUnix2}`);
-
+                    getResults(id1, id2, message, twitterEpoch);
                     break;
                 default:
-                    message.channel.send("set to discord");
+                    getResults(id1, id2, message, discordEpoch);
             }
-
         }
         else {
             sendInvalidError(message.channel);
@@ -80,7 +49,7 @@ client.on("message", (message) => {
 
 function sendInvalidError(channel) {
     const embed = new Discord.MessageEmbed()
-        .setColor("#5c6773")
+        .setColor("#48dff3")
         .setTitle("Invalid Usage")
         .addField("Usage", "To compare message ID timestamps, use:\n`" + prefix + "snowplace <id 1> <id 2> [service]`")
         .addField("Services", "discord, hiven, twitter (default discord)")
@@ -94,11 +63,37 @@ function isNumeric(value) {
     return /^\d+$/.test(value);
 }
 
-// Send result
+// Get and send results
 
+function getResults(id1, id2, message, epoch) {
+    // First id
+    const timeLocal1 = makePretty(getDate(id1, epoch));
+    const timeUTC1 = makePrettyUTC(getDate(id1, epoch));
+    const timeUnix1 = getUnixTimestamp(getDate(id1, epoch));
+    // Second id
+    const timeLocal2 = makePretty(getDate(id2, epoch));
+    const timeUTC2 = makePrettyUTC(getDate(id2, epoch));
+    const timeUnix2 = getUnixTimestamp(getDate(id2, epoch));
+    
+    if (getDate(id1, epoch) < getDate(id2, epoch)) {
+        let diffdate = formatDiff(
+            getDiff(getDate(id1, epoch), getDate(id2, epoch))
+        );
+        message.channel.send("FIRST IS FASTER BY " + diffdate);
+    }
+    else if (getDate(id1, epoch) > getDate(id2, epoch)) {
+        let diffdate = formatDiff(
+            getDiff(getDate(id1, epoch), getDate(id2, epoch))
+        );
+        message.channel.send("SECOND IS FASTER BY " + diffdate);
+    }
+    else {
+        message.channel.send("error");
+    }
 
-
-
+    message.channel.send(`**FIRST ID** Local time: ${timeLocal1} - UTC time: ${timeUTC1} - Unix time: ${timeUnix1}`);
+    message.channel.send(`**SECOND ID** Local time: ${timeLocal2} - UTC time: ${timeUTC2} - Unix time: ${timeUnix2}`);
+}
 
 
 // Get results
@@ -157,6 +152,5 @@ function formatDiff(ms) {
 
     return humanized;
 }
-
 
 client.login(token);
