@@ -65,7 +65,7 @@ function isNumeric(value) {
     return /^\d+$/.test(value);
 }
 
-// Get and send results
+// Get results
 
 function getResults(id1, id2, message, epoch, service) {
     // First ID
@@ -97,6 +97,8 @@ function getResults(id1, id2, message, epoch, service) {
     }
 
 }
+
+// Create image and send results
 
 function createImage(data, message, faster) {
     const canvas = createCanvas(700, 850)
@@ -147,27 +149,27 @@ function createImage(data, message, faster) {
     // Time titles 1
     ctx.fillStyle = "#5C6773";
     ctx.textAlign = "start";
-    ctx.fillText("EASTERN STANDARD TIME", 75, 210); // EST
+    ctx.fillText("EASTERN STANDARD TIME", 75, 210); // LOCAL TIME
     ctx.fillText("COORDINATED UNIVERSAL TIME", 75, 300); // UTC
     ctx.fillText("UNIX TIME", 75, 390); // Unix
 
     // Time titles 2
     ctx.fillStyle = "#5C6773";
-    ctx.fillText("EASTERN STANDARD TIME", 75, 580); // EST
+    ctx.fillText("EASTERN STANDARD TIME", 75, 580); // LOCAL TIME
     ctx.fillText("COORDINATED UNIVERSAL TIME", 75, 670); // UTC
     ctx.fillText("UNIX TIME", 75, 760); // Unix
 
     // Times 1
     ctx.fillStyle = "#48DFF3";
     ctx.font = "500 25px Poppins";
-    ctx.fillText(data.timeLocal1, 75, 250); // EST
+    ctx.fillText(data.timeLocal1, 75, 250); // LOCAL TIME
     ctx.fillText(data.timeUTC1, 75, 340); // UTC
     ctx.fillText(data.timeUnix1, 75, 430); // Unix
 
     // Times 2
     ctx.fillStyle = "#48DFF3";
     ctx.font = "500 25px Poppins";
-    ctx.fillText(data.timeLocal2, 75, 620); // EST
+    ctx.fillText(data.timeLocal2, 75, 620); // LOCAL TIME
     ctx.fillText(data.timeUTC2, 75, 710); // UTC
     ctx.fillText(data.timeUnix2, 75, 800); // Unix
 
@@ -184,7 +186,7 @@ function createImage(data, message, faster) {
         });
 }
 
-// Get results
+// Calculate data
 
 function getDate(id, epoch) {
     const idint = BigInt.asUintN(64, id);
@@ -200,7 +202,8 @@ function makePretty(date) {
             minute: "numeric",
             second: "numeric",
 
-            hour12: true
+            hour12: true,
+            timeZone: "America/New_York"
         })
     );
 }
