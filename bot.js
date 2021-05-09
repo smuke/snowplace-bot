@@ -4,8 +4,8 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 
 const { createCanvas, registerFont, loadImage } = require("canvas")
-registerFont('Poppins-Regular.ttf', { family: 'Poppins Regular' })
-registerFont('Poppins-Medium.ttf', { family: 'Poppins Medium' })
+registerFont("Poppins-Regular.ttf", { family: "Poppins Regular" })
+registerFont("Poppins-Medium.ttf", { family: "Poppins Medium" })
 
 client.once("ready", () => {
     console.log("Snowplace bot has started!");
@@ -19,11 +19,11 @@ client.on("message", (message) => {
 
     if (command == "snowplace") {
         // If not enough args
-        if (args.length < 2) {
+        if (args.length < 1 || args.length > 3) {
             sendInvalidError(message.channel);
         }
         // If args are numbers
-        else if (isNumeric(args[0]) && isNumeric(args[1]) && args[0].length > 8 && args[1].length > 8) {
+        else if (isNumeric(args[0]) && isNumeric(args[1])) {
             const id1 = args[0];
             const id2 = args[1];
             const service = args[2];
@@ -48,15 +48,17 @@ client.on("message", (message) => {
             sendInvalidError(message.channel);
         }
     }
+    if (command == "help") {
+        sendInvalidError(message.channel);
+    }
 });
 
 
 function sendInvalidError(channel) {
     const embed = new Discord.MessageEmbed()
         .setColor("#48dff3")
-        .setTitle("Invalid Usage")
         .addField("Usage", "To compare message ID timestamps, use:\n`" + prefix + "snowplace <id 1> <id 2> [service]`")
-        .addField("Services (optional)", "discord, twitter, hiven (default discord)")
+        .addField("Services (optional)", "discord (default), twitter, hiven")
         .addField("Links", "*<:pepega:739989836592709684> [How do I find the message ID?](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-)*\n[Invite Bot](https://discord.com/oauth2/authorize?client_id=834658971896774686&scope=bot&permissions=363520) - [Website](https://snow.place) - [GitHub](https://github.com/smuke/)\n")
         .setFooter("Try Snow.place in your browser!", "https://cdn.glitch.com/0967da06-2ba6-4b43-b2a6-d4912fa3e754%2Ffavicon.png");
 
