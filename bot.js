@@ -1,7 +1,9 @@
 const { prefix, token } = require("./config.json");
 
-const Discord = require("discord.js");
-const client = new Discord.Client();
+const { Client, Intents, MessageEmbed, MessageAttachment } = require("discord.js");
+const myIntents = new Intents();
+myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES);
+const client = new Client({ intents: myIntents });
 
 const { createCanvas, registerFont, loadImage } = require("canvas")
 registerFont("Poppins-Regular.ttf", { family: "Poppins Regular" })
@@ -9,15 +11,19 @@ registerFont("Poppins-Medium.ttf", { family: "Poppins Medium" })
 
 client.once("ready", () => {
     console.log("Snowplace bot has started!");
-    client.user.setActivity(".snowplace <id1> <id2>")
+    client.user.setActivity(`snow.place | ${prefix}help`)
 });
 
-client.on("message", (message) => {
+client.on("messageCreate", (message) => {
+    console.log("message received");
+
     if (message.author.bot || !message.content.startsWith(prefix)) return;
     const args = message.content.toLowerCase().slice(prefix.length).trim().split(/ +/);
     const command = args.shift();
 
-    if (command == "snowplace") {
+
+
+    if (command == "compare") {
         // If not enough args
         if (args.length < 1 || args.length > 3) {
             sendInvalidError(message.channel);
@@ -55,14 +61,15 @@ client.on("message", (message) => {
 
 
 function sendInvalidError(channel) {
-    const embed = new Discord.MessageEmbed()
+    const embed = new MessageEmbed()
         .setColor("#48dff3")
-        .addField("Usage", "To compare message ID timestamps, use:\n`" + prefix + "snowplace <id 1> <id 2> [service]`")
+        .addField("Usage", "To compare message ID timestamps, use:\n`" + prefix + "compare <id 1> <id 2> [service]`")
+        .addField("Prefix", "`*`")
         .addField("Services (optional)", "discord (default), twitter, hiven")
         .addField("Links", "*<:pepega:739989836592709684> [How do I find the message ID?](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-)*\n[Invite Bot](https://discord.com/oauth2/authorize?client_id=834658971896774686&scope=bot&permissions=363520) - [Website](https://snow.place) - [GitHub](https://github.com/smuke/)\n")
         .setFooter("Try Snow.place in your browser!", "https://cdn.glitch.com/0967da06-2ba6-4b43-b2a6-d4912fa3e754%2Ffavicon.png");
 
-    channel.send(embed);
+    channel.send({ embeds: [embed] });
 }
 
 function isNumeric(value) {
@@ -97,7 +104,7 @@ function getResults(id1, id2, message, epoch, service) {
     }
     // Error
     else {
-        message.channel.send("Error occured, please try again.");
+        message.channel.send("An error occured, please try again.");
     }
 
 }
@@ -182,8 +189,9 @@ function createImage(data, message, faster) {
         .then((image) => {
             ctx.drawImage(image, 75, 40, 185, 30);
 
-            const attachment = new Discord.MessageAttachment(canvas.toBuffer(), "snowplace.png");
-            message.channel.send(attachment);
+            const attachment = new MessageAttachment(canvas.toBuffer(), "snowplace.png");
+            // Send message
+            message.channel.send({ content: "here", attachments: [attachment], reply: { messageReference: message.id }});
         })
         .catch((err) => {
             console.log(`Error loading image! ${err}`);
