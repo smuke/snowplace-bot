@@ -11,7 +11,9 @@ registerFont("Poppins-Medium.ttf", { family: "Poppins Medium" })
 
 client.once("ready", () => {
     console.log("Snowplace bot has started!");
-    client.user.setActivity(`snow.place | ${prefix}help`)
+    
+    updateStatus();
+    setInterval(updateStatus, 600000);
 });
 
 client.on("messageCreate", (message) => {
@@ -186,12 +188,19 @@ function createImage(data, message, faster) {
         .then((image) => {
             ctx.drawImage(image, 75, 40, 185, 30);
 
+            // Create attachment
             const attachment = new MessageAttachment(canvas.toBuffer(), "snowplace.png");
+            // Create embed
+            const embed = new MessageEmbed()
+                .setColor("#2f3136")
+                .setImage("attachment://snowplace.png")
+                .setFooter("Snow.place", "https://cdn.glitch.com/0967da06-2ba6-4b43-b2a6-d4912fa3e754%2Ffavicon.png");
             // Send message
-            message.channel.send({ files: [attachment], reply: { messageReference: message.id }});
+            message.channel.send({ embeds: [embed], files: [attachment], reply: { messageReference: message.id }});
         })
         .catch((err) => {
             console.log(`Error loading image! ${err}`);
+            message.channel.send("An error occured, please try again.");
         });
 }
 
@@ -251,6 +260,11 @@ function formatDiff(ms) {
     )}h ${Math.floor(minutes % 60)}m ${Math.floor(seconds % 60)}s ${msexcess}ms`;
 
     return humanized;
+}
+
+// Update status
+function updateStatus() {
+    client.user.setActivity(`snow.place | ${prefix}help`)
 }
 
 client.login(token);
