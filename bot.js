@@ -15,15 +15,13 @@ client.once("ready", () => {
 });
 
 client.on("messageCreate", (message) => {
-    console.log("message received");
-
     if (message.author.bot || !message.content.startsWith(prefix)) return;
     const args = message.content.toLowerCase().slice(prefix.length).trim().split(/ +/);
     const command = args.shift();
 
 
 
-    if (command == "compare") {
+    if (command == "compare" || command == "snowplace") {
         // If not enough args
         if (args.length < 1 || args.length > 3) {
             sendInvalidError(message.channel);
