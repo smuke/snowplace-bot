@@ -64,7 +64,6 @@ function sendInvalidError(channel) {
     const embed = new MessageEmbed()
         .setColor("#48dff3")
         .addField("Usage", "To compare message ID timestamps, use:\n`" + prefix + "compare <id 1> <id 2> [service]`")
-        .addField("Prefix", "`*`")
         .addField("Services (optional)", "discord (default), twitter, hiven")
         .addField("Links", "*<:pepega:739989836592709684> [How do I find the message ID?](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-)*\n[Invite Bot](https://discord.com/oauth2/authorize?client_id=834658971896774686&scope=bot&permissions=363520) - [Website](https://snow.place) - [GitHub](https://github.com/smuke/)\n")
         .setFooter("Try Snow.place in your browser!", "https://cdn.glitch.com/0967da06-2ba6-4b43-b2a6-d4912fa3e754%2Ffavicon.png");
