@@ -190,7 +190,7 @@ function createImage(data, message, faster) {
 
             const attachment = new MessageAttachment(canvas.toBuffer(), "snowplace.png");
             // Send message
-            message.channel.send({ content: "here", attachments: [attachment], reply: { messageReference: message.id }});
+            message.channel.send({ files: [attachment], reply: { messageReference: message.id }});
         })
         .catch((err) => {
             console.log(`Error loading image! ${err}`);
