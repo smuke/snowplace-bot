@@ -16,22 +16,22 @@ Discord bot alternative to the [snow.place website](https://snow.place) - compar
 
 ## Installation
 
-Requires `Node.js 16.6.0` or newer
+- Requires `Node.js 16.6.0` or newer
 
-- Clone this repo
+Clone this repo
  ```
  git clone https://github.com/smuke/snowplace-bot
  cd snowplace-bot
  ```
 
-- Install dependencies
+Install dependencies
  ```
 npm install
 yarn install
  ```
- * NOTE: Refer to [node-canvas wiki](https://github.com/Automattic/node-canvas/wiki) if having issues installing Canvas.
+- NOTE: Refer to [node-canvas wiki](https://github.com/Automattic/node-canvas/wiki) if having issues installing Canvas.
 
-- Create `config.json` file
+Create `config.json` file
 ```
 {
     "token": "YOUR_BOT_TOKEN",
@@ -39,7 +39,7 @@ yarn install
 }
 ```
 
-- Start the bot
+Start the bot
 ```
 node bot.js
 ```
