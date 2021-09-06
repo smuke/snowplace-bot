@@ -35,6 +35,7 @@ Create `config.json` file
 ```
 {
     "token": "YOUR_BOT_TOKEN",
+    "topggToken": "TOP_GG_TOKEN",
     "prefix": "YOUR_PREFIX"
 }
 ```
