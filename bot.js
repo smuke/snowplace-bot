@@ -1,9 +1,12 @@
-const { prefix, token } = require("./config.json");
+const { prefix, token, topggToken } = require("./config.json");
 
 const { Client, Intents, MessageEmbed, MessageAttachment } = require("discord.js");
 const myIntents = new Intents();
 myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES);
 const client = new Client({ intents: myIntents });
+
+const { AutoPoster } = require("topgg-autoposter");
+const poster = AutoPoster(topggToken, client);
 
 const { createCanvas, registerFont, loadImage } = require("canvas")
 registerFont("Poppins-Regular.ttf", { family: "Poppins Regular" })
@@ -20,8 +23,6 @@ client.on("messageCreate", (message) => {
     if (message.author.bot || !message.content.startsWith(prefix)) return;
     const args = message.content.toLowerCase().slice(prefix.length).trim().split(/ +/);
     const command = args.shift();
-
-
 
     if (command == "compare" || command == "snowplace") {
         // If not enough args
@@ -139,7 +140,7 @@ function createImage(data, message, faster) {
             ctx.fillText("-" + data.diffdate, 625, 520); // 2
             break;
         default:
-            message.channel.send("Error occured, please try again.");
+            message.channel.send("An error occured, please try again.");
     }
 
     // Line 1
