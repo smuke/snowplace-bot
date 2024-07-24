@@ -1,4 +1,4 @@
-# No longer maintained
+# No Longer Maintained
 
 This project is no longer being maintained! You may continue using the [snow.place website](https://snow.place) for comparisons.
 
