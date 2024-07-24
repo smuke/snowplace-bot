@@ -1,8 +1,6 @@
-<div align="center">
-    <a href="https://snow.place">
-        <img src="https://cdn.glitch.com/0967da06-2ba6-4b43-b2a6-d4912fa3e754%2Fsnowplace_logo.svg?v=1602736428469" alt="Snowplace Logo" width="600px" />
-    </a>
-</div>
+# No longer maintained
+
+This project is no longer being maintained! You may continue using the [snow.place website](https://snow.place) for comparisons.
 
 # Snowplace Discord Bot
 
